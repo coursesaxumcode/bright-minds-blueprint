@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProfilesRouteImport } from './routes/profiles'
 import { Route as ParentRouteImport } from './routes/parent'
 import { Route as MapRouteImport } from './routes/map'
@@ -16,6 +17,11 @@ import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PlayGameIdRouteImport } from './routes/play.$gameId'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfilesRoute = ProfilesRouteImport.update({
   id: '/profiles',
   path: '/profiles',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/parent': typeof ParentRoute
   '/profiles': typeof ProfilesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/play/$gameId': typeof PlayGameIdRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/parent': typeof ParentRoute
   '/profiles': typeof ProfilesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/play/$gameId': typeof PlayGameIdRoute
 }
 export interface FileRoutesById {
@@ -70,13 +78,28 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/parent': typeof ParentRoute
   '/profiles': typeof ProfilesRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/play/$gameId': typeof PlayGameIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/map' | '/parent' | '/profiles' | '/play/$gameId'
+  fullPaths:
+    | '/'
+    | '/home'
+    | '/map'
+    | '/parent'
+    | '/profiles'
+    | '/sitemap.xml'
+    | '/play/$gameId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/map' | '/parent' | '/profiles' | '/play/$gameId'
+  to:
+    | '/'
+    | '/home'
+    | '/map'
+    | '/parent'
+    | '/profiles'
+    | '/sitemap.xml'
+    | '/play/$gameId'
   id:
     | '__root__'
     | '/'
@@ -84,6 +107,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/parent'
     | '/profiles'
+    | '/sitemap.xml'
     | '/play/$gameId'
   fileRoutesById: FileRoutesById
 }
@@ -93,11 +117,19 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   ParentRoute: typeof ParentRoute
   ProfilesRoute: typeof ProfilesRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   PlayGameIdRoute: typeof PlayGameIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profiles': {
       id: '/profiles'
       path: '/profiles'
@@ -149,8 +181,19 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   ParentRoute: ParentRoute,
   ProfilesRoute: ProfilesRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   PlayGameIdRoute: PlayGameIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
