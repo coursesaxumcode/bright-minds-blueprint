@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfilesRouteImport } from './routes/profiles'
+import { Route as ParentRouteImport } from './routes/parent'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
@@ -18,6 +19,11 @@ import { Route as PlayGameIdRouteImport } from './routes/play.$gameId'
 const ProfilesRoute = ProfilesRouteImport.update({
   id: '/profiles',
   path: '/profiles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParentRoute = ParentRouteImport.update({
+  id: '/parent',
+  path: '/parent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
   '/map': typeof MapRoute
+  '/parent': typeof ParentRoute
   '/profiles': typeof ProfilesRoute
   '/play/$gameId': typeof PlayGameIdRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
   '/map': typeof MapRoute
+  '/parent': typeof ParentRoute
   '/profiles': typeof ProfilesRoute
   '/play/$gameId': typeof PlayGameIdRoute
 }
@@ -60,21 +68,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
   '/map': typeof MapRoute
+  '/parent': typeof ParentRoute
   '/profiles': typeof ProfilesRoute
   '/play/$gameId': typeof PlayGameIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/map' | '/profiles' | '/play/$gameId'
+  fullPaths: '/' | '/home' | '/map' | '/parent' | '/profiles' | '/play/$gameId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/map' | '/profiles' | '/play/$gameId'
-  id: '__root__' | '/' | '/home' | '/map' | '/profiles' | '/play/$gameId'
+  to: '/' | '/home' | '/map' | '/parent' | '/profiles' | '/play/$gameId'
+  id:
+    | '__root__'
+    | '/'
+    | '/home'
+    | '/map'
+    | '/parent'
+    | '/profiles'
+    | '/play/$gameId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HomeRoute: typeof HomeRoute
   MapRoute: typeof MapRoute
+  ParentRoute: typeof ParentRoute
   ProfilesRoute: typeof ProfilesRoute
   PlayGameIdRoute: typeof PlayGameIdRoute
 }
@@ -86,6 +103,13 @@ declare module '@tanstack/react-router' {
       path: '/profiles'
       fullPath: '/profiles'
       preLoaderRoute: typeof ProfilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parent': {
+      id: '/parent'
+      path: '/parent'
+      fullPath: '/parent'
+      preLoaderRoute: typeof ParentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -123,6 +147,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HomeRoute: HomeRoute,
   MapRoute: MapRoute,
+  ParentRoute: ParentRoute,
   ProfilesRoute: ProfilesRoute,
   PlayGameIdRoute: PlayGameIdRoute,
 }
